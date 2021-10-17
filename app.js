@@ -35,11 +35,30 @@ app.get("/detail", function (req, res) {
   let preference = {
     items: [
       {
+        id: "1234",
         title: req.query.title,
-        unit_price: Number(req.query.price),
+        description: "Dispositivo móvil de Tienda e-commerce",
+        picture_url: req.query.img,
         quantity: parseInt(req.query.unit),
+        unit_price: Number(req.query.price),
+        // External reference? Preguntar
       },
     ],
+    payer: {
+      name: "Lalo",
+      surname: "Landa",
+      email: "test_user_63274575@testuser.com",
+      phone: {
+        area_code: "11",
+        number: 22223333,
+      },
+      identification: {},
+      address: {
+        street_name: "Falsa",
+        street_number: 123,
+        zip_code: "1111",
+      },
+    },
     payment_methods: {
       excluded_payment_methods: [
         {
@@ -53,6 +72,12 @@ app.get("/detail", function (req, res) {
       ],
       installments: 6,
     },
+    back_urls: {
+      success: "https://www.success.com",
+      failure: "http://www.failure.com",
+      pending: "http://www.pending.com",
+    },
+    auto_return: "approved",
   };
 
   mercadopago.preferences
