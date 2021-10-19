@@ -95,7 +95,6 @@ app.get("/failure", function (req, res) {
 });
 
 app.get("/success", function (req, res) {
-  console.log(req.query.collection_id);
   res.render("success", req.query);
 });
 
