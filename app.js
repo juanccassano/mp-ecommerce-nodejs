@@ -4,13 +4,9 @@ var port = process.env.PORT || 3000;
 
 var app = express();
 
-const bodyParser = require("body-parser");
-
-//Middleware
-app.use(bodyParser.urlencoded({ extended: false }));
-
 // SDK de Mercado Pago
 const mercadopago = require("mercadopago");
+const { response } = require("express");
 
 // Credenciales
 mercadopago.configure({
@@ -42,7 +38,6 @@ app.get("/detail", function (req, res) {
         picture_url: req.query.img,
         quantity: parseInt(req.query.unit),
         unit_price: Number(req.query.price),
-        // External reference? Preguntar
       },
     ],
     payer: {
@@ -74,22 +69,38 @@ app.get("/detail", function (req, res) {
       installments: 6,
     },
     back_urls: {
-      success: "https://www.success.com",
-      failure: "http://www.failure.com",
-      pending: "http://www.pending.com",
+      success: req.get("host") + "/success",
+      failure: req.get("host") + "/failure",
+      pending: req.get("host") + "/pending",
     },
     auto_return: "approved",
+    notification_url: "https://enh41r6lixdk.x.pipedream.net",
+    external_reference: "juanccassano@gmail.com",
   };
 
   mercadopago.preferences
     .create(preference)
     .then(function (response) {
       req.query.checkoutId = response.body.id;
+      req.query.init_point = response.body.init_point;
       res.render("detail", req.query);
     })
     .catch(function (error) {
       console.log(error);
     });
+});
+
+app.get("/failure", function (req, res) {
+  res.render("failure");
+});
+
+app.get("/success", function (req, res) {
+  console.log(req.query.collection_id);
+  res.render("success", req.query);
+});
+
+app.get("/pending", function (req, res) {
+  res.render("pending");
 });
 
 app.listen(port);
